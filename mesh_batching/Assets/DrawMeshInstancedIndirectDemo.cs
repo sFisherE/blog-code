@@ -38,6 +38,11 @@ public class DrawMeshInstancedIndirectDemo : MonoBehaviour {
 
         InitializeBuffers();
     }
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.yellow;
+    //    Gizmos.DrawWireCube(bounds.center, bounds.size);
+    //}
 
     private void InitializeBuffers() {
         int kernel = compute.FindKernel("CSMain");
@@ -49,7 +54,7 @@ public class DrawMeshInstancedIndirectDemo : MonoBehaviour {
         args[0] = (uint)mesh.GetIndexCount(0);
         args[1] = (uint)population;
         args[2] = (uint)mesh.GetIndexStart(0);
-        args[3] = (uint)mesh.GetBaseVertex(0);
+        args[3] = (uint)mesh.GetBaseVertex(0);//顶点数量不用设置吗？顶点数据是同一份，设置index数据就够了
         argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
         argsBuffer.SetData(args);
 
@@ -67,8 +72,12 @@ public class DrawMeshInstancedIndirectDemo : MonoBehaviour {
             properties[i] = props;
         }
 
+        //meshPropertiesBuffer设置了compute的输出，也设置了material的输入
+        //运行的时候，compute先计算，将结果输出给material
         meshPropertiesBuffer = new ComputeBuffer(population, MeshProperties.Size());
         meshPropertiesBuffer.SetData(properties);
+
+        //内存是同一份？
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
         material.SetBuffer("_Properties", meshPropertiesBuffer);
     }

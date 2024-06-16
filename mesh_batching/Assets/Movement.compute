@@ -32,7 +32,7 @@ void CSMain (uint3 id : SV_DispatchThreadID) {
     );
 
     // Apply translation to existing matrix, which will be read in the shader.
-    _Properties[id.x].mat = mul(translation, mat);
+    _Properties[id.x].mat = mul(translation, mat);//表示mat * translation，先应用矩阵mat的变换,然后再应用translation的变换
 
     /* Just for demo gif.  Not actually very useful -- need to inverse rotation first.
     float4x4 rotation = float4x4(
